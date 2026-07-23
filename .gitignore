@@ -11,3 +11,4 @@ process_log.csv
 data/processed/
 data/secom/processed/
 kunci-jawaban.md
+scenario_ground_truth.csv

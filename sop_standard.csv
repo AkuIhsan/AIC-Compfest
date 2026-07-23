@@ -1,4 +1,9 @@
 parameter,nilai
-curing_time,30
-temp_min,80
-temp_max,85
+curing_time,30.0
+curing_tolerance,2.0
+temp_min,80.0
+temp_max,85.0
+pressure_min,100.0
+pressure_max,110.0
+manual_override_allowed,0.0
+visual_check_required,1.0

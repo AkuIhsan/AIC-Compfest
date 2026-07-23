@@ -1,5 +1,5 @@
+from __future__ import annotations
 from pathlib import Path
-
 import pandas as pd
 
 REQUIRED_COLUMNS = {
@@ -15,8 +15,13 @@ REQUIRED_COLUMNS = {
 }
 REQUIRED_SOP_PARAMETERS = {
     "curing_time",
+    "curing_tolerance",
     "temp_min",
     "temp_max",
+    "pressure_min",
+    "pressure_max",
+    "manual_override_allowed",
+    "visual_check_required",
 }
 
 
@@ -26,14 +31,20 @@ def load_sop(sop_path: str | Path) -> pd.Series:
         raise FileNotFoundError(f"file sop gada: {Path(sop_path).resolve()}")
 
     sop_df = pd.read_csv(sop_path)
-
     required_columns = {"parameter", "nilai"}
     missing_columns = required_columns - set(sop_df.columns)
 
     if missing_columns:
         raise ValueError(f"kolom sop kurang: {sorted(missing_columns)}")
-    sop = sop_df.set_index("parameter")["nilai"]
 
+    dupe_parameter = sop_df.loc[
+        sop_df["parameter"].duplicated(),
+        "parameter",
+    ].tolist()
+    if dupe_parameter:
+        raise ValueError(f"parameter sop dupe: {dupe_parameter}")
+
+    sop = sop_df.set_index("parameter")["nilai"]
     missing_parameter = REQUIRED_SOP_PARAMETERS - set(sop.index)
     if missing_parameter:
         raise ValueError(f"parameter sop kurang: {sorted(missing_parameter)}")
@@ -51,6 +62,7 @@ def build_features(
         Schema kolom dari data training. kalo diberikan, hasil akan
         disesuaikan agar kolom serta urutannya sama persis.
     """
+
     if REQUIRED_COLUMNS - set(df.columns):
         raise ValueError(
             f"Kolom process log kurang: {sorted(REQUIRED_COLUMNS - set(df.columns))}"
@@ -66,8 +78,10 @@ def build_features(
         "manual_override",
         "visual_check_done",
     ]
+
     for column in numeric_columns:
         data[column] = pd.to_numeric(data[column], errors="raise")
+
     for column in ["manual_override", "visual_check_done"]:
         invalid_values = set(data[column].dropna().unique()) - {0, 1}
 
@@ -76,21 +90,47 @@ def build_features(
                 f"{column} harus bernilai 0 atau 1, "
                 f"tetapi ditemukan: {sorted(invalid_values)}"
             )
+
     categorical_columns = [
         "machine_id",
         "shift",
         "material_batch",
         "operator_id",
     ]
+
     for column in categorical_columns:
-        out = pd.DataFrame(index=data.index)
-        out["curing_deviation"] = sop["curing_time"] - data["curing_time_actual"]
-        out["temp_deviation"] = (sop["temp_min"] - data["temp_actual"]).clip(
-            lower=0
-        ) + (data["temp_actual"] - sop["temp_max"]).clip(lower=0)
-        out["pressure"] = data["pressure_actual"]
-        out["manual_override"] = data["manual_override"].astype(int)
-        out["v_check_done"] = data["visual_check_done"].astype(int)
+        data[column] = data[column].astype("string").fillna("UNKNOWN").str.strip()
+    curing_lower_limit = sop["curing_time"] - sop["curing_tolerance"]
+    curing_upper_limit = sop["curing_time"] + sop["curing_tolerance"]
+    out = pd.DataFrame(index=data.index)
+
+    out["curing_shortfall"] = (curing_lower_limit - data["curing_time_actual"]).clip(
+        lower=0
+    )
+    out["curing_excess"] = (data["curing_time_actual"] - curing_upper_limit).clip(
+        lower=0
+    )
+    out["curing_outside_sop"] = (
+        (out["curing_shortfall"] > 0) | (out["curing_excess"] > 0)
+    ).astype(int)
+    out["temp_below_min"] = (sop["temp_min"] - data["temp_actual"]).clip(lower=0)
+    out["temp_above_max"] = (data["temp_actual"] - sop["temp_max"]).clip(lower=0)
+    out["temp_outside_sop"] = (
+        (out["temp_below_min"] > 0) | (out["temp_above_max"] > 0)
+    ).astype(int)
+    out["pressure_below_min"] = (sop["pressure_min"] - data["pressure_actual"]).clip(
+        lower=0
+    )
+    out["pressure_above_max"] = (data["pressure_actual"] - sop["pressure_max"]).clip(
+        lower=0
+    )
+    out["pressure_outside_sop"] = (
+        (out["pressure_below_min"] > 0) | (out["pressure_above_max"] > 0)
+    ).astype(int)
+    out["manual_override"] = (data["manual_override"]).astype(int)
+    out["visual_check_skipped"] = (
+        data["visual_check_done"] < sop["visual_check_required"]
+    ).astype(int)
 
     categorical_features = pd.get_dummies(
         data[categorical_columns],
