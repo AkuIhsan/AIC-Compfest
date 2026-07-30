@@ -1,0 +1,13 @@
+{
+  "batch_id": "B00123",
+  "timestamp": "2026-07-23T23:30:00",
+  "machine_id": "M2",
+  "shift": "malam",
+  "operator_id": "OP03",
+  "material_batch": "B",
+  "curing_time_actual": 24.5,
+  "temp_actual": 81.2,
+  "pressure_actual": 106.0,
+  "manual_override": true,
+  "visual_check_done": false
+}
