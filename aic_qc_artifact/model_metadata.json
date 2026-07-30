@@ -1,0 +1,42 @@
+{
+  "model_type": "XGBoost",
+  "feature_count": 28,
+  "training_rows": 4000,
+  "oof_pr_auc": 0.3562,
+  "threshold_review": 0.39,
+  "threshold_alarm": 0.89,
+  "threshold_selection": {
+    "review_rule": "alert_rate <= 30%",
+    "review_alert_rate_oof": 0.2873,
+    "alarm_rule": "alert_rate 1-5% AND alert_count >= 50, pilih precision terbaik",
+    "alarm_alert_rate_oof": 0.0212,
+    "alarm_alert_count_oof": 85,
+    "alarm_precision_oof": 0.7059
+  },
+  "evaluation": {
+    "split": "development_test",
+    "note": "Threshold dibekukan dari OOF train. Split ini telah digunakan berulang selama pengembangan, sehingga angka di bawah bersifat indikatif, bukan estimasi generalisasi yang sepenuhnya bersih.",
+    "rows": 1000,
+    "zone": {
+      "monitor": {"count": 699, "actual_fail_rate": 0.0587},
+      "review": {"count": 273, "actual_fail_rate": 0.1282},
+      "alarm": {"count": 28, "actual_fail_rate": 0.6071}
+    },
+    "combined_recall_review_alarm": 0.5591,
+    "alarm_precision": 0.6071,
+    "total_review_burden": 0.3010,
+    "observed_driver_fail_recovery": {
+      "total": 54,
+      "caught": 48,
+      "rate": 0.8889
+    }
+  },
+  "library_versions": {
+    "python": "3.12.4",
+    "xgboost": "1.7.6",
+    "scikit-learn": "1.2.2",
+    "shap": "0.41.0",
+    "pandas": "1.5.3",
+    "numpy": "1.23.5"
+  }
+}

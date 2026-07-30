@@ -1,0 +1,48 @@
+{
+    "model_metadata": {
+        "model_version": "1.0.0",
+        "dataset_version": "synthetic-v1",
+        "random_seed": 42,
+        "training_date": "2026-07-24 21:59:32",
+        "oof_pr_auc": 0.3562124061606484,
+        "total_review_burden_pct": 30.1,
+        "alarm_precision": 0.6071428571428571,
+        "combined_recall": 0.5591397849462365
+    },
+    "feature_schema": [
+        "curing_shortfall",
+        "curing_excess",
+        "curing_outside_sop",
+        "temp_below_min",
+        "temp_above_max",
+        "temp_outside_sop",
+        "pressure_below_min",
+        "pressure_above_max",
+        "pressure_outside_sop",
+        "manual_override",
+        "visual_check_skipped",
+        "mesin_M1",
+        "mesin_M2",
+        "mesin_M3",
+        "shift_malam",
+        "shift_pagi",
+        "shift_siang",
+        "material_A",
+        "material_B",
+        "material_C",
+        "op_OP01",
+        "op_OP02",
+        "op_OP03",
+        "op_OP04",
+        "op_OP05",
+        "op_OP06",
+        "op_OP07",
+        "op_OP08"
+    ],
+    "threshold_config": {
+        "threshold_review": 0.39,
+        "threshold_alarm": 0.89,
+        "score_type": "uncalibrated_risk_score",
+        "score_calibrated": false
+    }
+}

@@ -1,0 +1,72 @@
+{
+  "batch_id": "B00123",
+  "timestamp": "2026-07-23T23:30:00",
+  "sop_check": {
+    "has_deviation": true,
+    "deviation_count": 3,
+    "deviations": [
+      {
+        "parameter": "curing_time",
+        "status": "below_sop",
+        "actual_value": 24.5,
+        "sop_min": 28.0,
+        "sop_max": 32.0,
+        "deviation": -3.5,
+        "unit": "minute"
+      },
+      {
+        "parameter": "manual_override",
+        "status": "violation",
+        "actual_value": true,
+        "expected_value": false
+      },
+      {
+        "parameter": "visual_check",
+        "status": "skipped",
+        "actual_value": false,
+        "expected_value": true
+      }
+    ]
+  },
+  "risk_analysis": {
+    "risk_score": 0.9661,
+    "zone": "alarm",
+    "decision": "alarm",
+    "explanation_status": "success",
+    "sop_risk_contributors": [
+      {
+        "id": "manual_override",
+        "label": "Manual override used",
+        "contribution": 0.7829735279083252
+      },
+      {
+        "id": "curing_shortfall",
+        "label": "Curing time below SOP minimum",
+        "contribution": 0.4451908767223358
+      },
+      {
+        "id": "curing_outside_sop",
+        "label": "Curing Outside Sop",
+        "contribution": 0.11284783482551575
+      }
+    ],
+    "context_contributors": [
+      {
+        "id": "mesin_M2",
+        "label": "Machine M2",
+        "contribution": 0.9946763515472412
+      },
+      {
+        "id": "shift_malam",
+        "label": "Night shift",
+        "contribution": 0.5784713625907898
+      },
+      {
+        "id": "material_B",
+        "label": "Material batch B",
+        "contribution": 0.1888904571533203
+      }
+    ],
+    "model_version": "1.0.0"
+  }
+}
