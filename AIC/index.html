@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <title>Pengecekan Curing</title>
+  </head>
+  <body>
+    <main>
+      <!-- Bagian awal/Welcome -->
+      <section id="welcome-section">
+        <img src="rocket.png" alt="" />
+        <p>Illustration by <a href="https://icons8.com/illustrations/author/AJeVuFhkCuqC">ekzi.letters Ouch!</a></p>
+        <h1>Selamat Datang!</h1>
+        <p>Lakukan pengecekan curing bersama model AI kami untuk mendapatkan analisis yang cepat, akurat, dan mudah dipahami.</p>
+        <a href="#form-section" class="button">Mulai Sekarang</a>
+      </section>
+
+      <!-- Bagian form  -->
+      <section id="form-section" data-aos="fade-up" data-aos-duration="1000">
+        <h2>Masukkan data curing</h2>
+        <form id="curing-form">
+          <!-- Batch Id Input -->
+          <div class="input-item">
+            <label for="batchID">Batch ID</label>
+            <select name="batchID" id="batchID">
+              <option value="B00123">B00123</option>
+            </select>
+          </div>
+
+          <!-- Machine Id Input -->
+          <div class="input-item">
+            <label for="machineID">Machine ID</label>
+            <select name="machineID" id="machineID">
+              <option value="M2">M2</option>
+            </select>
+          </div>
+
+          <!-- shift Input -->
+          <div class="input-item">
+            <label for="shift">Shift</label>
+            <select name="shift" id="shift">
+              <option value="pagi">pagi</option>
+              <option value="siang">siang</option>
+              <option value="malam">malam</option>
+            </select>
+          </div>
+
+          <!-- Operator Input -->
+          <div class="input-item">
+            <label for="operatorID">Operator ID</label>
+            <select name="operatorID" id="operatorID">
+              <option value="OP03">OP03</option>
+            </select>
+          </div>
+
+          <!-- Material Input -->
+          <div class="input-item">
+            <label for="materialBatch">Material Batch</label>
+            <select name="materialBatch" id="materialBatch">
+              <option value="B">B</option>
+            </select>
+          </div>
+
+          <!-- curing time Input -->
+          <div class="input-item">
+            <label for="curing-time">Waktu Curing</label>
+            <input type="number" name="curing-time" id="curing-time" step="any" required />
+          </div>
+
+          <!-- temperatur Input -->
+          <div class="input-item">
+            <label for="temperatur">Temperatur</label>
+            <input type="number" name="temperatur" id="temperatur" step="any" required />
+          </div>
+
+          <!-- tekanan Input -->
+          <div class="input-item">
+            <label for="tekanan">Tekanan</label>
+            <input type="number" name="tekanan" id="tekanan" step="any" required />
+          </div>
+
+          <!-- Manual Ovveride Input -->
+          <div class="input-item">
+            <label for="kendali-manual">kendali Manual</label>
+            <select name="kendali-manual" id="kendali-manual">
+              <option value="ya">Ya</option>
+              <option value="tidak">Tidak</option>
+            </select>
+          </div>
+
+          <!-- Visual Check Input -->
+          <div class="input-item">
+            <label for="pengecekan-visual">Pengecekan Visual</label>
+            <select name="pengecekan-visual" id="pengecekan-visual">
+              <option value="sudah">Sudah</option>
+              <option value="belum">Belum</option>
+            </select>
+          </div>
+
+          <!-- Tombol Submit -->
+          <button type="submit">Lakukan Pengecekan</button>
+          <button type="reset" id="resetButton">Reset</button>
+        </form>
+
+        <p class="error-message">Error Field temp_actual harus berupa angka</p>
+      </section>
+
+      <!-- Bagian Respon dari Back-End -->
+      <section id="responses-section" data-aos="fade-up" data-aos-duration="1000">
+        <h2>Hasil Pengecekan</h2>
+        <p>Hasil pengecekan terdiri dari dua bagian yaitu pelanggaran SOP dan analisis resiko dengan seberapa besar kontribusi permasalahan dari berbagai sektor.</p>
+        <h3>1.Pelanggaran SOP</h3>
+        <div id="daftar-pelanggaran-sop"></div>
+
+        <!-- Tampilan jika tidak ada pelanggaran SOP -->
+        <p class="sop-aman">Tidak ada pelanggaran</p>
+
+        <h3>2.Analisis Resiko</h3>
+        <div id="deskripsi-resiko"></div>
+
+        <div id="daftar-kontribusi"></div>
+
+        <!-- Tampilan jika tidak ada penjelasan-->
+        <p class="contribution-false">Tidak ada penjelasan</p>
+      </section>
+    </main>
+
+    <!-- Library untuk animasi -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Script inisiasi untuk animasi -->
+    <script>
+      AOS.init();
+    </script>
+
+    <!-- Kode Javascript untuk melakukan validasi form dan fetch data-->
+    <script>
+      let statusSubmit = false;
+
+      // Mengambil beberapa elemen html untuk dilakukan manipulasi DOM
+      const daftarPelanggaranSop = document.getElementById("daftar-pelanggaran-sop");
+      const sopAman = document.getElementsByClassName("sop-aman");
+      const deskripsiResiko = document.getElementById("deskripsi-resiko");
+      const daftarKontribusi = document.getElementById("daftar-kontribusi");
+      const contributionFalse = document.getElementsByClassName("contribution-false");
+      const errorMessage = document.getElementsByClassName("error-message");
+      const tombolReset = document.getElementById("resetButton");
+
+      // Mengambil beberapa elemen input untuk divalidasi sebelum melakukan fetch API
+      const form = document.getElementById("curing-form");
+      const inputNumber = document.querySelectorAll('input[type="number"]');
+      const inputKendaliManual = document.getElementById("kendali-manual");
+      const inputPengecekanVisual = document.getElementById("pengecekan-visual");
+
+      //   Mengambil nilai input
+      const machineId = document.getElementById("machineID").value;
+      const batchId = document.getElementById("batchID").value;
+      const operatorId = document.getElementById("operatorID").value;
+      const materialBatch = document.getElementById("materialBatch").value;
+      const shift = document.getElementById("shift").value;
+
+      // Fungsi untuk mereset halaman
+      tombolReset.addEventListener("click", () => {
+        form.reset();
+        location.reload();
+      });
+
+      //   Fungsi validasi dan melakukan fetch API ketika tombol submit ditekan
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        //   Mengisi nilai Timestamp
+        const timestamp = new Date().toISOString();
+
+        // Melakukan perubahan tipe data pada nilai input tipe number dari string (default) menjadi float
+        let waktuCuring = parseFloat(inputNumber[0].value);
+        let temperatur = parseFloat(inputNumber[1].value);
+        let tekanan = parseFloat(inputNumber[2].value);
+
+        // Melakukan perubahan tipe data nilai input yang bersifat boolean yaitu kendali manual dan pengecekan visual
+        let kendaliManual = inputKendaliManual.value === "ya" ? true : false;
+        let pengecekanVisual = inputPengecekanVisual.value === "sudah" ? true : false;
+
+        // Melakukan fetchApi untuk mendapatkan responsi
+        // const responses = fetch("/data.json", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify({
+        //     batch_id: batchId,
+        //     timestamp: timestamp,
+        //     machine_id: machineId,
+        //     shift: shift,
+        //     operator_id: operatorId,
+        //     material_batch: materialBatch,
+        //     curing_time_actual: waktuCuring,
+        //     temp_actual: temperatur,
+        //     pressure_actual: tekanan,
+        //     manual_override: kendaliManual,
+        //     visual_check_done: pengecekanVisual,
+        //   }),
+        // })
+        //   .then((response) => {
+        //     if (!response.ok) {
+        //       throw new Error("Tidak bisa mengambil data");
+        //     }
+        //     return response.json();
+        //   })
+        //   .then((data) => {
+        //     console.log(data);
+        //   })
+        //   .catch(console.log(Error));
+
+        // Uji coba fetch untuk melihat bagaimana data ditampilkan
+        fetch("/data.json")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Tidak bisa mengambil data");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (statusSubmit) {
+              return;
+            }
+
+            statusSubmit = true;
+
+            // Validasi ketika respons nya menghasilkan error
+            if (data.error) {
+              errorMessage[0].textContent = `Error : ${data.error.message}`;
+              errorMessage[0].style.display = "block";
+            }
+
+            // Melakukan pengecekan apakah ada pelanggaran sop
+            if (!data.sop_check.has_deviation) {
+              sopAman[0].style.display = "block";
+            } else {
+              sopAman[0].style.display = "none";
+            }
+
+            // Ambil list pelanggaran sop
+            const pelanggaranSop = data.sop_check.deviations;
+
+            // Melooping untuk menampilkan pelanggaran sop
+            for (i = 0; i < pelanggaranSop.length; i++) {
+              const elemen = `<div class="card-container">
+                                <h3>${pelanggaranSop[i].parameter.replace("_", " ")}</h3>
+                                <p>${pelanggaranSop[i].status.replace("_", " ")}</p>
+                            </div>`;
+
+              console.log(elemen);
+              daftarPelanggaranSop.innerHTML += elemen;
+            }
+
+            // Ambil objek hasil analisis resiko
+            const nilaiDeskripsiResiko = Object.values(data.risk_analysis);
+
+            // Daftar elemen deskripsi analisi
+            const listDeskripsiResiko = [`<p>${nilaiDeskripsiResiko[0]}</p>`, `<p>${nilaiDeskripsiResiko[1]} zone</p>`, `<p>${nilaiDeskripsiResiko[2]} decision</p>`, `<p>explanation ${nilaiDeskripsiResiko[3]}</p>`];
+
+            // Melooping daftar elemen deskripsi analisis untuk ditampilkan
+            for (i = 0; i < 4; i++) {
+              deskripsiResiko.innerHTML += listDeskripsiResiko[i];
+            }
+
+            // Melakukan pengecekan apakah ada kontribusi yang bisa ditampilkan
+            if (!data.risk_analysis.sop_risk_contributors.length && !data.risk_analysis.context_contributors.length) {
+              contributionFalse[0].style.display = "block";
+
+              //   Cek apakah ada message
+              if (data.risk_analysis.message) {
+                contributionFalse[0].textContent = data.risk_analysis.message;
+                return;
+              }
+
+              return;
+            }
+
+            contributionFalse[0].style.display = "none";
+
+            // Ambil daftar kontibusi SOP terhadap resiko
+            const daftarKontibusiSop = data.risk_analysis.sop_risk_contributors;
+
+            // Melooping daftar kontribusi SOP
+            for (i = 0; i < daftarKontibusiSop.length; i++) {
+              const elemen = `<div class="card-container">
+                <p class="label-contribution">${daftarKontibusiSop[i].label}</p>
+                <p class="category-contribution">SOP Risk Contributors</p>
+                <p>Contribution :${daftarKontibusiSop[i].contribution}</p>
+              </div>`;
+
+              daftarKontribusi.innerHTML += elemen;
+            }
+
+            // Ambil daftar kontibusi SOP terhadap resiko
+            const daftarKontibusiContext = data.risk_analysis.context_contributors;
+
+            // Melooping daftar kontribusi SOP
+            for (i = 0; i < daftarKontibusiContext.length; i++) {
+              const elemen = `<div class="card-container">
+                <p class="label-contribution">${daftarKontibusiContext[i].label}</p>
+                <p class="category-contribution">Context Risk Contributors</p>
+                <p>Contribution :${daftarKontibusiContext[i].contribution}</p>
+              </div>`;
+
+              daftarKontribusi.innerHTML += elemen;
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      });
+    </script>
+  </body>
+</html>

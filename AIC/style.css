@@ -1,0 +1,267 @@
+/* Konfigurasi awal untuk semua elemen  */
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Konfigurasi awal untuk elemen anchor (a) */
+a {
+  text-decoration: none;
+  color: black;
+  font-weight: 600;
+}
+
+/* Style untuk semua elemen h2 */
+h2 {
+  text-align: center;
+  font-size: clamp(1rem, calc(0.6rem + 2vw), 3rem);
+}
+
+/* Style untuk elemen main */
+main {
+  max-width: 64rem;
+  margin-inline: auto;
+}
+
+/* Style untuk welcome section */
+#welcome-section {
+  margin-top: 20px;
+  padding-bottom: 60px;
+  border-bottom: dashed rgba(76, 173, 212, 1);
+
+  img {
+    display: block;
+    margin-inline: auto;
+    width: min(200px, 30%);
+    padding-bottom: 20px;
+  }
+
+  h1 {
+    font-size: clamp(1.5rem, calc(1rem + 2.5vw), 4rem);
+    text-align: center;
+  }
+
+  p {
+    padding-inline: 10px;
+    font-size: clamp(0.8rem, calc(0.56rem + 1.2vw), 2rem);
+    text-align: center;
+  }
+
+  .button {
+    font-size: clamp(1.2rem, calc(0.94rem + 1.3vw), 2.5rem);
+    margin-top: 15px;
+    display: block;
+    width: fit-content;
+    margin-inline: auto;
+    border-radius: 10px;
+    color: white;
+    padding: 5px 20px;
+    background: #4cadd4;
+    background: linear-gradient(90deg, rgba(76, 173, 212, 1) 0%, rgba(174, 125, 227, 1) 100%);
+    box-shadow: 5px 5px 15px 0px rgba(76, 173, 212, 0.2);
+  }
+}
+
+#form-section {
+  margin-top: 20px;
+  padding-bottom: 60px;
+  border-bottom: dashed rgba(76, 173, 212, 1);
+
+  .error-message {
+    padding: 10px 20px;
+    text-align: center;
+    margin-top: 30px;
+    background-color: rgba(172, 22, 22, 0.689);
+    width: 80%;
+    margin-inline: auto;
+    font-weight: 700;
+    border-radius: 10px;
+    color: white;
+    display: none;
+
+    @media (width >= 50rem) {
+      width: 93%;
+    }
+  }
+
+  form {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+
+    @media (width >= 50rem) {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    button {
+      width: 90%;
+      height: fit-content;
+      margin-inline: auto;
+      margin-top: 20px;
+      padding-block: 5px;
+      font-size: clamp(1.2rem, calc(0.94rem + 1.3vw), 2.5rem);
+      border-radius: 10px;
+      background: #4cadd4;
+      background: linear-gradient(90deg, rgba(76, 173, 212, 1) 0%, rgba(174, 125, 227, 1) 100%);
+      box-shadow: 5px 5px 15px 0px rgba(76, 173, 212, 0.2);
+      color: white;
+      border: none;
+      font-weight: 700;
+
+      @media (width >= 64rem) {
+        width: 97%;
+      }
+    }
+
+    .input-item {
+      flex: 30%;
+      padding-inline: 20px;
+    }
+
+    label,
+    select {
+      width: fit-content;
+      display: block;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: clamp(1rem, calc(0.8rem + 1vw), 2rem);
+    }
+
+    select,
+    input {
+      width: 100%;
+      font-size: clamp(1rem, calc(0.85rem + 0.75vw), 1.75rem);
+      border-color: rgba(76, 173, 212, 1);
+      border-width: 2px;
+      border-radius: 5px;
+      padding: 5px;
+      font-weight: normal;
+    }
+
+    select:focus {
+      border-color: rgba(76, 173, 212, 1);
+      background-color: rgba(76, 173, 212, 1);
+      color: white;
+      outline: none;
+    }
+
+    option {
+      background-color: white;
+      color: black;
+    }
+
+    input[type="number"] {
+      width: 95%;
+      border-color: rgba(76, 173, 212, 1);
+      outline: none;
+      box-shadow: none;
+      appearance: none;
+
+      @media (width >= 50rem) {
+        width: 97%;
+      }
+    }
+
+    #shift {
+      text-transform: capitalize;
+    }
+  }
+}
+
+#responses-section {
+  margin-top: 20px;
+  padding-bottom: 50px;
+
+  p {
+    padding-inline: 10px;
+    font-size: clamp(0.8rem, calc(0.56rem + 1.2vw), 2rem);
+    text-align: center;
+  }
+
+  h3 {
+    margin-top: 20px;
+    text-align: left;
+    padding-inline: 10px;
+    font-size: clamp(1rem, calc(0.7rem + 1.5vw), 2.5rem);
+    padding-bottom: 10px;
+  }
+
+  #deskripsi-resiko {
+    display: flex;
+    flex-wrap: wrap;
+    padding-inline: 20px;
+    margin-bottom: 10px;
+    gap: 10px;
+
+    p {
+      color: white;
+      background-color: black;
+      border-radius: 10px;
+    }
+  }
+
+  #daftar-pelanggaran-sop,
+  #daftar-kontribusi {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-inline: 20px;
+
+    @media (width >= 50rem) {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    .card-container {
+      flex: 30%;
+      border: rgba(76, 173, 212, 0.5) solid 1px;
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: left;
+      gap: 5px;
+
+      h3 {
+        margin-top: 0;
+        font-weight: 500;
+        padding: 0;
+        text-transform: capitalize;
+      }
+
+      p {
+        text-align: left;
+        color: white;
+        font-weight: 600;
+        background-color: rgb(203, 9, 9);
+        width: fit-content;
+        border-radius: 5px;
+        font-size: clamp(0.8rem, calc(0.66rem + 0.7vw), 1.5rem);
+      }
+
+      .category-contribution {
+        background-color: black;
+        color: white;
+      }
+
+      .label-contribution {
+        background-color: white;
+        color: black;
+        padding: 0;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .sop-aman,
+  .contribution-false {
+    color: rgba(121, 116, 116, 0.5);
+    font-weight: 700;
+    display: block;
+  }
+}

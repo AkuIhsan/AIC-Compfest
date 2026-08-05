@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "INVALID_INPUT",
+    "message": "Field temp_actual harus berupa angka",
+    "field": "temp_actual"
+  }
+}
