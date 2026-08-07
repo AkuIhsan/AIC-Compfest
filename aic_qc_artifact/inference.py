@@ -4,10 +4,14 @@ from typing import Any, Dict
 import joblib
 import pandas as pd
 import shap
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from sop_checker import check__singele_record
 from f_engineer import build_features, load_sop
 
 ROOT = Path(__file__).resolve().parent
+SOP_PATH = ROOT.parent / "sop_standard.csv"
 try:
     PIPELINE = joblib.load(ROOT / "aic_qc_pipeline.pkl")
     with open(ROOT / "aic_qc_config.json", "r", encoding="utf-8") as f:
@@ -20,7 +24,7 @@ try:
 
     # Semua step SEBELUM classifier (None kalau pipeline cuma berisi clf)
     PRE_STEPS = PIPELINE[:-1] if len(PIPELINE.steps) > 1 else None
-    SOP = load_sop(ROOT / "sop_standard.csv")
+    SOP = load_sop(SOP_PATH)
 
 except FileNotFoundError as e:
     raise RuntimeError(f"Missing required artifact file: {e.filename}")
@@ -116,13 +120,13 @@ def predict(record: dict) -> dict:
     Encapsulates the entire inference flow from raw record to API contract response.
     """
     # 1. Parse raw record & SOP check
-    sop_result = check__singele_record(record)
+    sop_result = check__singele_record(record, sop_path=SOP_PATH)
     sop_check_response = _build_sop_check(record, sop_result)
 
     # 2. Feature Engineering
     # build_features expects a DataFrame and handles reindexing if feature_columns is provided
     df_raw = pd.DataFrame([record])
-    X_eng = build_features(df_raw, feature_columns=FEATURE_COLUMNS)
+    X_eng = build_features(df_raw, sop_path=SOP_PATH, feature_columns=FEATURE_COLUMNS)
 
     # Strict Reindexing: Ensure exactly 28 features in correct order, fill missing with 0
     X_eng = X_eng.reindex(columns=FEATURE_COLUMNS, fill_value=0)
