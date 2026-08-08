@@ -1,0 +1,3 @@
+-r aic_qc_artifact/requirements.txt
+fastapi
+uvicorn[standard]
